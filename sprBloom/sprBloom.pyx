@@ -60,7 +60,39 @@ class sprBloom(object):
         if key in self:
             return True
         if not self.filters:
-            filter = pyreBloom()
+            filter = pyreBloom(
+                    key='%s.%d' % (self.key, 1),
+                    capacity=self.init_capacity,
+                    error=self.error * (1.0 - self.ratio),
+                    host=self.host,
+                    port=self.port,
+                    password=self.password)
+            self.filters.append(filter)
+        else:
+            filter = self.filters[-1]
+            if filter.count >= filter.capacity:
+                filter = pyreBloom(
+                    key='%s.%d' % (key, len(self.filters) + 1),
+                    capacity=self.init_capacity * self.scale,
+                    error=self.error * self.ratio,
+                    host=self.host,
+                    port=self.port,
+                    password=self.password)
+                self.filters.append(filter)
+        filter.add(key)
+        return False
+
+
+    @property
+    def capacity(self):
+        return sum(f.capacity for f in self.filters)
+
+    @property
+    def count(self):
+        return len(self)
+
+    def __len__(self):
+        return sum(f.count for f in self.filters)
 
 cdef class pyreBloom(object):
 	cdef bloom.pyrebloomctxt context
@@ -78,6 +110,7 @@ cdef class pyreBloom(object):
 		password=''):
 		self.key = key
         self.count = 0
+        self.capacity = capacity
 		if bloom.init_pyrebloom(&self.context, self.key, capacity,
 			error, host, port, password):
 			raise pyreBloomException(self.context.ctxt.errstr)
