@@ -72,8 +72,8 @@ class sprBloom(object):
             filter = self.filters[-1]
             if filter.count >= filter.capacity:
                 filter = pyreBloom(
-                    key='%s.%d' % (key, len(self.filters) + 1),
-                    capacity=self.init_capacity * self.scale,
+                    key='%s.%d' % (self.key, len(self.filters) + 1),
+                    capacity=filter.capacity * self.scale,
                     error=self.error * self.ratio,
                     host=self.host,
                     port=self.port,
@@ -94,9 +94,14 @@ class sprBloom(object):
     def __len__(self):
         return sum(f.count for f in self.filters)
 
+
+ctypedef unsigned long int uint64_t
+
 cdef class pyreBloom(object):
     cdef bloom.pyrebloomctxt context
     cdef bytes               key
+    cdef uint64_t            _capacity
+    cdef uint64_t            _count
     
     property bits:
         def __get__(self):
@@ -109,8 +114,8 @@ cdef class pyreBloom(object):
     def __cinit__(self, key, capacity, error, host='127.0.0.1', port=6379,
         password=''):
         self.key = key
-        self.count = 0
-        self.capacity = capacity
+        self._capacity = capacity
+        self._count = 0
         if bloom.init_pyrebloom(&self.context, self.key, capacity,
             error, host, port, password):
             raise pyreBloomException(self.context.ctxt.errstr)
@@ -125,11 +130,11 @@ cdef class pyreBloom(object):
         if getattr(value, '__iter__', False):
             r = [bloom.add(&self.context, v, len(v)) for v in value]
             r = bloom.add_complete(&self.context, len(value))
-            self.count = self.count + len(value)
+            self._count = self._count + len(value)
         else:
             bloom.add(&self.context, value, len(value))
             r = bloom.add_complete(&self.context, 1)
-            self.count = self.count + 1
+            self._count = self._count + 1
         if r < 0:
             raise pyreBloomException(self.context.ctxt.errstr)
         return r
@@ -157,6 +162,14 @@ cdef class pyreBloom(object):
     
     def __contains__(self, value):
         return self.contains(value)
+
+    @property
+    def capacity(self):
+        return self._capacity
+
+    @property
+    def count(self):
+        return self._count
 
     def keys(self):
         '''Return a list of the keys used in this bloom filter'''

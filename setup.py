@@ -1,6 +1,4 @@
-#!/usr/bin/env python
 from distutils.core import setup
-from setuptools import setup
 
 ext_files = ['sprBloom/bloom.c']
 
@@ -8,7 +6,7 @@ kwargs = {}
 
 try:
     from Cython.Distutils import build_ext
-    from Cython.distutils import Extension
+    from Cython.Distutils import Extension
     print 'Building from Cython'
     ext_files.append('sprBloom/sprBloom.pyx')
     kwargs['cmdclass'] = {'build_ext': build_ext}
@@ -22,11 +20,11 @@ ext_modules = [Extension('sprBloom', ext_files, libraries=['hiredis'])]
 
 
 setup(
-    name = "spybloom",
+    name = "sprBloom",
     version = '1.0.0',
-    author="Yiyu Chen",
-    author_email="chen_yiyu@foxmail.com",
-    license="MIT License",
+    author = "Yiyu Chen",
+    author_email = "chen_yiyu@foxmail.com",
+    license = "MIT License",
     ext_modules = ext_modules,
     classifiers = [
         'Intended Audience :: Developers', 
