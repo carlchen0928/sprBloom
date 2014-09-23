@@ -17,6 +17,18 @@ pip install -r requirements.txt
 sudo python setup.py install
 ```
 
+##Redis
+```bash
+git clone https://github.com/antirez/redis
+cd redis && make && sudo make install
+```
+
+##Cython
+```bash
+# On Ubuntu
+sudo apt-get install cython
+```
+
 ##Hiredis
 ```bash
 git clone https://github.com/redis/hiredis
