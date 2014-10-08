@@ -45,11 +45,11 @@ f = sprBloom('myfilter', capacity=100000,
               host='127.0.0.1', port=6379,
               password='')
 ```
-`SMALL_SET_GROWTH` means capacity increase by double
-`LARGE_SET_GROWTH` means capacity increase by fourth times
-`capacity` means initial capacity, **I suggest you specify it not too small**, you can't all rely on self increase
-`err_rate` means bloom filter error rate, when capacity increase, **it guarantee that error rate will not increase**
-`host` is redis host address
+`SMALL_SET_GROWTH` means capacity increase by double.
+`LARGE_SET_GROWTH` means capacity increase by fourth times.
+`capacity` means initial capacity, **I suggest you specify it not too small**, you can't all rely on self increase.
+`err_rate` means bloom filter error rate, when capacity increase, **it guarantee that error rate will not increase**.
+`host` is redis host address.
 
 ###add item
 ```python
