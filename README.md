@@ -53,7 +53,7 @@ f = sprBloom('myfilter', capacity=100000,
 
 ###add item
 ```python
-f.add(key)
+f.add(key)                  #if key already in bloom filter, will return True, else will return False
 ```
 
 ###get bloom filter property
