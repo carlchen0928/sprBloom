@@ -37,7 +37,7 @@ sudo ldconfig
 ```
 
 #Usage
-**create a bloom filter**
+###create a bloom filter
 ```python
 from sprBloom import sprBloom
 f = sprBloom('myfilter', capacity=100000, 
@@ -50,3 +50,20 @@ f = sprBloom('myfilter', capacity=100000,
 `capacity` means initial capacity, **I suggest you specify it not too small**, you can't all rely on self increase
 `err_rate` means bloom filter error rate, when capacity increase, **it guarantee that error rate will not increase**
 `host` is redis host address
+
+###add item
+```python
+f.add(key)
+```
+
+###get bloom filter property
+```python
+print f.capacitt
+print f.count
+print len(f)
+```
+
+###test key in bloom filter
+```python
+print key in f              #will print True or False
+```
